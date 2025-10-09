@@ -9,8 +9,7 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-from scipy.stats import chi2, ks_2samp
-from scipy.stats.stats import Ks_2sampResult, wasserstein_distance
+from scipy.stats import chi2, ks_2samp, wasserstein_distance
 
 from giskard.core.test_result import TestMessage, TestMessageLevel, TestResult
 from giskard.datasets.base import Dataset
@@ -99,9 +98,10 @@ def _calculate_drift_psi(actual_series, reference_series, max_categories):
     return total_psi, pd.DataFrame(output_data)
 
 
-def _calculate_ks(actual_series, reference_series) -> Ks_2sampResult:
-    return ks_2samp(reference_series, actual_series)
+from scipy.stats import KstestResult  
 
+def _calculate_ks(actual_series, reference_series) -> "KstestResult":
+    return ks_2samp(reference_series, actual_series)
 
 def _calculate_earth_movers_distance(actual_series, reference_series):
     unique_reference = np.unique(reference_series)
@@ -806,7 +806,7 @@ def test_drift_prediction_ks(
         else pd.Series(model.predict(actual_dataset).prediction)
     )
 
-    result: Ks_2sampResult = _calculate_ks(prediction_reference, prediction_actual)
+    result: KstestResult = _calculate_ks(prediction_reference, prediction_actual)
 
     passed = True if threshold is None else bool(result.pvalue >= threshold)
 
