@@ -9,7 +9,7 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-from scipy.stats import chi2, ks_2samp, wasserstein_distance
+from scipy.stats import KstestResult, chi2, ks_2samp, wasserstein_distance
 
 from giskard.core.test_result import TestMessage, TestMessageLevel, TestResult
 from giskard.datasets.base import Dataset
@@ -98,10 +98,9 @@ def _calculate_drift_psi(actual_series, reference_series, max_categories):
     return total_psi, pd.DataFrame(output_data)
 
 
-from scipy.stats import KstestResult  
-
-def _calculate_ks(actual_series, reference_series) -> "KstestResult":
+def _calculate_ks(actual_series, reference_series) -> KstestResult:
     return ks_2samp(reference_series, actual_series)
+
 
 def _calculate_earth_movers_distance(actual_series, reference_series):
     unique_reference = np.unique(reference_series)
